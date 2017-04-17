@@ -1,0 +1,6 @@
+* Project for database technology
+  
+** Usage
+   1) Edit the makefile and change CXX to your prefered C++ compiler (clang, gcc)
+   2) Run make to compile
+   3) ./dbms help for quick info
