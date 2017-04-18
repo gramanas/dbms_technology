@@ -42,7 +42,7 @@ void createRandFile(char* filename, uint blockNum){
         block.blockid = i; 
 
         for(uint j = 0; j < MAX_RECORDS_PER_BLOCK; j++) { // Put records in blocks 
-            record.recid = record_id += 1;
+            record.recid = record_id++;
 
             genRandomString(temp_str,STR_LENGTH - 1);
             strcpy(record.str, temp_str);
@@ -79,6 +79,7 @@ void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool b
                 }
                 else if (recBool == true && block.entries[i].recid == recordId) {
                     printRecord(block, i);
+                    return;
                 }
                 else if (blockBool == true && block.blockid == blockId) {
                     printRecord(block ,i);
