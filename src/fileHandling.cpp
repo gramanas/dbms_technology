@@ -36,7 +36,10 @@ void createRandFile(char* filename, uint blockNum){
 
     char* temp_str;
     temp_str = (char*)malloc(STR_LENGTH);
-    if (temp_str == NULL) exit(1);
+    if (temp_str == NULL) {
+        cerr << "Memory error" << endl;
+        exit(1);
+    }        
 
     for(uint i = 0; i < blockNum; i++){ //Make blockNum blocks and put records inside
         block.blockid = i; 
@@ -68,7 +71,10 @@ void printRecord(block_t block, int i) {
 
 void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool blockBool) {
     int file = open(filename, O_RDONLY, S_IRWXU);
-    if (file == -1) exit(1);
+    if (file == -1) {
+        cerr << "No such file." << endl;
+        exit(1);
+    }
     
     block_t block;
     while (read(file, &block, sizeof(block_t))) {
