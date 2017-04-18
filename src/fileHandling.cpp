@@ -50,7 +50,7 @@ void createRandFile(char* filename, uint blockNum){
             genRandomString(temp_str,STR_LENGTH - 1);
             strcpy(record.str, temp_str);
 
-            record.num = rand() % 20000; //Give the record a random number
+            record.num = rand() % 100000; //Give the record a random number
             record.valid = true;
             memmove(&block.entries[j], &record, sizeof(record_t));
         }
