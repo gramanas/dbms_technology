@@ -7,11 +7,11 @@
 
 ## Usage
 
-### `./dbms create filename #blocks`
+### ./dbms create filename #blocks
 
 This will create a binary file with that many blocks, named filename.
 
-### `./dmbs print filename`
+### ./dmbs print filename
 
 This will print the whole file named filename, record by record and block by block.
 
