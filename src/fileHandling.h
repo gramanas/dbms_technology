@@ -12,6 +12,9 @@ void genRandomString(char *s, const int len);
 // get true or false with a 50 - 50 chance
 bool randomBool();
 
+// count vaild entries in a file
+uint countValid(char* filename);
+
 // Create a random binary file
 void createRandFile(char* filename, uint blockNum);
 

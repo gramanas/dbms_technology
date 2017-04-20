@@ -26,6 +26,10 @@ bool randomBool() {
 
 void createRandFile(char* filename, uint blockNum){
     int file = creat(filename, S_IRWXU);
+    if (file == -1) {
+        cerr << "Can't create file. Permissions?" << endl;
+        exit(1);
+    }
 
     record_t record;
     uint record_id = 0;
@@ -50,7 +54,7 @@ void createRandFile(char* filename, uint blockNum){
             genRandomString(temp_str,STR_LENGTH - 1);
             strcpy(record.str, temp_str);
 
-            record.num = rand() % 100000; //Give the record a random number
+            record.num = rand() % 100; //Give the record a random number
             record.valid = true;
             memmove(&block.entries[j], &record, sizeof(record_t));
         }
@@ -61,11 +65,33 @@ void createRandFile(char* filename, uint blockNum){
     close(file);
 }
 
+uint countValid(char* filename) {
+    int file = open(filename, O_RDONLY, S_IRWXU);
+    if (file == -1) {
+        cerr << "No such file." << endl;
+        exit(1);
+    }
+    
+    block_t block;
+    uint count = 0;
+
+    while (read(file, &block, sizeof(block_t))) {
+        for (uint i = 0; i < block.nreserved; i++) {
+            if (block.entries[i].valid) {
+                count++;
+            }
+        }
+    }    
+    close(file);
+    return count;
+}
+
 void printRecord(block_t block, int i) { 
     cout << "B_ID  : " << block.blockid          << endl; 
     cout << "R_ID  : " << block.entries[i].recid << endl;
     cout << "R_NUM : " << block.entries[i].num   << endl;
     cout << "R_STR : " << block.entries[i].str   << endl;
+    cout << "Valid : " << block.entries[i].valid << endl;
     cout << "----------------------------------" << endl;
 }
 
@@ -79,15 +105,14 @@ void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool b
     block_t block;
     while (read(file, &block, sizeof(block_t))) {
         for (uint i = 0; i < block.nreserved; i++) {
-            if (block.entries[i].valid){
+            if (recBool == true && block.entries[i].recid == recordId) {
+                printRecord(block, i);
+                return;
+            }
+            if (block.entries[i].valid) {
                 if (recBool == false && blockBool == false) {
                     printRecord(block, i);
-                }
-                else if (recBool == true && block.entries[i].recid == recordId) {
-                    printRecord(block, i);
-                    return;
-                }
-                else if (blockBool == true && block.blockid == blockId) {
+                } else if (blockBool == true && block.blockid == blockId) {
                     printRecord(block ,i);
                 }
             }
