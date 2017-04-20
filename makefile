@@ -9,7 +9,7 @@ SDIR=src
 ODIR=obj
 
 # Compiler flags
-CXXFLAGS=-I$(IDIR) -std=c++11
+CXXFLAGS=-I$(IDIR) #-std=c++11
 
 # Dependancies to track
 _DEPS = fileHandling.h dbtproj.h
