@@ -16,12 +16,12 @@ _DEPS = fileHandling.h dbtproj.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Objects to track
-_OBJ = fileHandling.o main.o
+_OBJ = fileHandling.o main.o dbtproj.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 # Object rule
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -ggdb -c -o $@ $< $(CXXFLAGS)
 
 # make rule
 dbms: $(OBJ)
