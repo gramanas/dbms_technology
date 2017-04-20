@@ -56,12 +56,24 @@ void EliminateDuplicates (char *infile, unsigned char field,
     list<char *> strList;
     uint i = 0;
 
+    //////////////////////////
+    // THIS IS WAY TOO SLOW //
+    //////////////////////////
+
+    // TODO should implement a binary search on the list
+    //      to check if the value exists
+
+    // returns 1 if the value is not there (it also inserts it in the corret place)
+    // returns 0 if the value is there
+
+    // List is not a good data structure for this, since we need direct access to every cell
+    // Prolly vector...
     while(!feof(in)) {
         while (i < nmem_blocks && !feof(in)) {
             fread(&buffer[i], 1, sizeof(block_t), in);
             for (uint j = 0; j < buffer[i].nreserved; j++) { 
                 switch (field) {
-                case 0: // recid
+                case '0': // recid
                     // if num exists in numList
                     if (find(numList.begin(), numList.end(), buffer[i].entries[j].recid) != numList.end()) {
                         buffer[i].entries[j].valid = false;
@@ -69,7 +81,7 @@ void EliminateDuplicates (char *infile, unsigned char field,
                         numList.push_back(buffer[i].entries[j].recid);
                     }
                     break;
-                case 1: // num
+                case '1': // num
                     // if num exists in numList
                     if (find(numList.begin(), numList.end(), buffer[i].entries[j].num) != numList.end()) {
                         buffer[i].entries[j].valid = false;
