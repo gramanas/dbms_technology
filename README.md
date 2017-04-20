@@ -1,5 +1,7 @@
 # Project for database technology
-  
+
+UNDER DEVELOPMENT
+
 ## Installation
    * Edit the makefile and change `CXX` to your prefered C++ compiler (clang, gcc)
    * Run `make` to compile
