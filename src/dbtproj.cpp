@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <list>
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <iterator>
 
@@ -34,7 +35,42 @@ void MergeSort (char *infile, unsigned char field,
     fclose(out);    
 }
 //   field: which field will be used for sorting: 0 is for recid, 1 is for num, 2 is for str and 
-//   3 is for both num and str
+//   3 is for both num and 
+
+template <typename T>
+bool searchAndInsert (vector<T> * vect, T item, int first, int last) {
+    //binary search
+    uint mid;
+
+    if (vect->size() == 0) {
+        vect->push_back(item);
+        return false;
+    }
+
+    if (vect->at(last) < item) {
+        vect->push_back(item);
+        return false;
+    }
+
+    if (item < vect-> at(first)) {
+        vect->insert(vect->begin(), item);
+        return false;
+    }
+    
+    while (first <= last) {
+        mid = first + (last - first) / 2;
+        if (vect->at(mid) == item) {
+            return true;
+        } else if (item < vect->at(mid)) {
+            last = mid - 1;
+        } else {
+            first = mid + 1;
+        }
+    }
+
+    vect->insert(vect->begin() + first, item);
+    return false;
+}
  
 void EliminateDuplicates (char *infile, unsigned char field,
                           block_t *buffer, unsigned int nmem_blocks,
@@ -52,22 +88,10 @@ void EliminateDuplicates (char *infile, unsigned char field,
     }
     
     buffer = new block_t[nmem_blocks];
-    list<uint> numList;
-    list<char *> strList;
+    vector<string> strVect;
+    vector<uint> numVect;
     uint i = 0;
 
-    //////////////////////////
-    // THIS IS WAY TOO SLOW //
-    //////////////////////////
-
-    // TODO should implement a binary search on the list
-    //      to check if the value exists
-
-    // returns 1 if the value is not there (it also inserts it in the corret place)
-    // returns 0 if the value is there
-
-    // List is not a good data structure for this, since we need direct access to every cell
-    // Prolly vector...
     while(!feof(in)) {
         while (i < nmem_blocks && !feof(in)) {
             fread(&buffer[i], 1, sizeof(block_t), in);
@@ -75,22 +99,21 @@ void EliminateDuplicates (char *infile, unsigned char field,
                 switch (field) {
                 case '0': // recid
                     // if num exists in numList
-                    if (find(numList.begin(), numList.end(), buffer[i].entries[j].recid) != numList.end()) {
+                    if (searchAndInsert(&numVect, buffer[i].entries[j].recid, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
-                    } else {
-                        numList.push_back(buffer[i].entries[j].recid);
                     }
                     break;
                 case '1': // num
                     // if num exists in numList
-                    if (find(numList.begin(), numList.end(), buffer[i].entries[j].num) != numList.end()) {
+                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
-                    } else {
-                        numList.push_back(buffer[i].entries[j].num);
                     }
                     break;
                     // case 2: // str
-                    //TODO
+                    //                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
+                    //                        buffer[i].entries[j].valid = false;
+                    //                    }
+                    break;                    //TODO
                     //     break;
                     // case 3: // str + num
                     //TODO
