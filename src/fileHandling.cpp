@@ -25,6 +25,7 @@ bool randomBool() {
 }
 
 void createRandFile(char* filename, uint blockNum){
+    // Must conver to FILE *
     int file = creat(filename, S_IRWXU);
     if (file == -1) {
         cerr << "Can't create file. Permissions?" << endl;

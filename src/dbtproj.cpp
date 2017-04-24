@@ -109,10 +109,10 @@ void EliminateDuplicates (char *infile, unsigned char field,
                         buffer[i].entries[j].valid = false;
                     }
                     break;
-                    // case 2: // str
-                    //                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
-                    //                        buffer[i].entries[j].valid = false;
-                    //                    }
+                    case '2': // str
+                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
+                        buffer[i].entries[j].valid = false;
+                    }
                     break;                    //TODO
                     //     break;
                     // case 3: // str + num
