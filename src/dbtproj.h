@@ -13,7 +13,7 @@
 #ifndef _DBTPROJ_H
 #define _DBTPROJ_H
 
-#define STR_LENGTH 32
+#define STR_LENGTH 6 // 32 is way too big for testing
 #define MAX_RECORDS_PER_BLOCK 128
 
 // This is the definition of a record. Contains three fields, recid, num and str.

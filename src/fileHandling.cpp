@@ -11,7 +11,9 @@ using namespace std;
 
 void genRandomString(char *s, const int len) {
     static const char alphanum[] =
-        "0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ";
+        //63^32 = 3.79225543573e57
+        //"0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ";
+        "abcd";
 
     for (int i = 0; i < len; ++i) {
         s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];

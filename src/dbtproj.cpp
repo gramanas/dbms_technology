@@ -109,15 +109,17 @@ void EliminateDuplicates (char *infile, unsigned char field,
                         buffer[i].entries[j].valid = false;
                     }
                     break;
-                    case '2': // str
-                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
+                case '2': // str
+                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
                     }
-                    break;                    //TODO
-                    //     break;
-                    // case 3: // str + num
-                    //TODO
-                    //     break;
+                    break;
+                case '3': // str + num
+                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1) &&
+                        searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
+                        buffer[i].entries[j].valid = false;
+                    }
+                    break;
                 default:
                     cerr << "wrong filed" << endl;
                     exit(1);
