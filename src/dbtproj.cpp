@@ -76,7 +76,7 @@ void EliminateDuplicates (char *infile, unsigned char field,
                           block_t *buffer, unsigned int nmem_blocks,
                           char *outfile, unsigned int *nunique, unsigned int *nios) {
     FILE *in, *out;
-
+    
     in = fopen(infile, "r");
     if (in == NULL) {
         cerr << "Could not open input file." << endl;
