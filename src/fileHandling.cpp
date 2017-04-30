@@ -1,8 +1,7 @@
 #include <iostream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h> 
-#include <unistd.h>
 
 #include "./dbtproj.h"
 #include "./fileHandling.h"
@@ -27,11 +26,11 @@ bool randomBool() {
 }
 
 void createRandFile(char* filename, uint blockNum){
-    // Must conver to FILE *
-    int file = creat(filename, S_IRWXU);
-    if (file == -1) {
-        cerr << "Can't create file. Permissions?" << endl;
-        exit(1);
+    FILE * out;
+
+    out = fopen(filename, "w");
+    if (out == NULL) {
+        cerr << "Could not open input file." << endl;
     }
 
     record_t record;
@@ -63,29 +62,30 @@ void createRandFile(char* filename, uint blockNum){
         }
         block.nreserved = MAX_RECORDS_PER_BLOCK;
         block.valid = true;
-        write(file, &block, sizeof(block_t));
+        fwrite(&block, 1, sizeof(block_t), out);
     }
-    close(file);
+    fclose(out);
 }
 
 uint countValid(char* filename) {
-    int file = open(filename, O_RDONLY, S_IRWXU);
-    if (file == -1) {
+    FILE * in;
+
+    in = fopen(filename, "r");
+    if (in == NULL) {
         cerr << "No such file." << endl;
-        exit(1);
     }
     
     block_t block;
     uint count = 0;
 
-    while (read(file, &block, sizeof(block_t))) {
+    while (fread(&block, 1, sizeof(block_t), in)) {
         for (uint i = 0; i < block.nreserved; i++) {
             if (block.entries[i].valid) {
                 count++;
             }
         }
     }    
-    close(file);
+    fclose(in);
     return count;
 }
 
@@ -99,14 +99,15 @@ void printRecord(block_t block, int i) {
 }
 
 void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool blockBool) {
-    int file = open(filename, O_RDONLY, S_IRWXU);
-    if (file == -1) {
+    FILE * in;
+
+    in = fopen(filename, "r");
+    if (in == NULL) {
         cerr << "No such file." << endl;
-        exit(1);
     }
-    
+
     block_t block;
-    while (read(file, &block, sizeof(block_t))) {
+    while (fread(&block, 1, sizeof(block_t), in)) {
         for (uint i = 0; i < block.nreserved; i++) {
             if (recBool == true && block.entries[i].recid == recordId) {
                 printRecord(block, i);
@@ -121,5 +122,5 @@ void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool b
             }
         }
     }
-    close(file);
+    fclose(in);
 }
