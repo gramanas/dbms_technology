@@ -92,32 +92,44 @@ void EliminateDuplicates (char *infile, unsigned char field,
     vector<uint> numVect;
     uint i = 0;
 
+    *nios = 0;
+    *nunique = 0;
+    
     while(!feof(in)) {
         while (i < nmem_blocks && !feof(in)) {
             fread(&buffer[i], 1, sizeof(block_t), in);
+            ++*nios;
             for (uint j = 0; j < buffer[i].nreserved; j++) { 
                 switch (field) {
                 case '0': // recid
                     // if num exists in numList
                     if (searchAndInsert(&numVect, buffer[i].entries[j].recid, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
+                    } else {
+                        ++*nunique;
                     }
                     break;
                 case '1': // num
                     // if num exists in numList
                     if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
+                    } else {
+                        ++*nunique;
                     }
                     break;
                 case '2': // str
                     if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
+                    } else {
+                        ++*nunique;
                     }
                     break;
                 case '3': // str + num
                     if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1) &&
                         searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
+                    } else {
+                        ++*nunique;
                     }
                     break;
                 default:
@@ -126,6 +138,7 @@ void EliminateDuplicates (char *infile, unsigned char field,
                 }
             }
             fwrite(&buffer[i], 1, sizeof(block_t), out);
+            ++*nios;
         }
     }
     fclose(in);

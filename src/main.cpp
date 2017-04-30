@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
             cout << countValid(argv[2]) << endl;
         }
     } else if (strcmp(argv[1], "dupl") == 0) {
-        uint first, second;
+        uint nunique, nios;
         char field = 4; // wrong field in case user enters wrong name
         block_t *buffer = new block_t[20];
         if (strcmp(argv[3], "record") == 0) {
@@ -51,7 +51,9 @@ int main(int argc, char** argv) {
         } else if (strcmp(argv[3], "numstr") == 0) {
             field = '3';
         }
-        EliminateDuplicates(argv[2], field, buffer, (uint)atoi(argv[4]), argv[5], &first, &second);
+        EliminateDuplicates(argv[2], field, buffer, (uint)atoi(argv[4]), argv[5], &nunique, &nios);
+        cout << "# of unique " << argv[3] << "s in " << argv[5] << ":\n\t" << nunique << "\n\n";
+        cout << "# of I/Os in " << argv[5] << ":\n\t" << nios << "\n\n";
     }
       else {
         cout << "Type -h for quick help." << endl;
