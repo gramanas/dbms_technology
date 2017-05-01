@@ -109,37 +109,46 @@ void EliminateDuplicates (char *infile, unsigned char field,
     
     *nios = 0;
     *nunique = 0;
-    
-    while(!feof(in)) {
-        while (i < nmem_blocks && !feof(in)) {
-            fread(&buffer[i], 1, sizeof(block_t), in);
+
+    size_t n = sizeof(block_t);
+    while(n == sizeof(block_t)) {
+        while (i < nmem_blocks && n == sizeof(block_t)) {
+            n = fread(&buffer[i], 1, sizeof(block_t), in);
+            if (n != sizeof(block_t)) {
+                break;
+            }
             ++*nios;
             for (uint j = 0; j < buffer[i].nreserved; j++) { 
                 switch (field) {
                 case '0': // User selected record
-                        if (searchAndInsert(&numVect, buffer[i].entries[j].recid, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
+                        if (searchAndInsert(&numVect, buffer[i].entries[j].recid, 0,
+                                            numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
                     } else {
                         ++*nunique;
                     }
                     break;
                 case '1': // User selected number
-                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1)) {
+                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0,
+                                        numVect.size() == 0 ? 0 : numVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
                     } else {
                         ++*nunique;
                     }
                     break;
                 case '2': // User selected string
-                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
+                    if (searchAndInsert(&strVect, string(buffer[i].entries[j].str),
+                                        0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
                     } else {
                         ++*nunique;
                     }
                     break;
                 case '3': // User selected numstr
-                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0, numVect.size() == 0 ? 0 : numVect.size()-1) &&
-                        searchAndInsert(&strVect, string(buffer[i].entries[j].str), 0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
+                    if (searchAndInsert(&numVect, buffer[i].entries[j].num, 0,
+                                        numVect.size() == 0 ? 0 : numVect.size()-1) &&
+                        searchAndInsert(&strVect, string(buffer[i].entries[j].str),
+                                        0, strVect.size() == 0 ? 0 : strVect.size()-1)) {
                         buffer[i].entries[j].valid = false;
                     } else {
                         ++*nunique;
@@ -163,12 +172,25 @@ void MergeJoin (char *infile1, char *infile2,
                 unsigned char field, block_t *buffer,
                 unsigned int nmem_blocks, char *outfile,
                 unsigned int *nres, unsigned int *nios) {
+    // http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
+    // also
+    // https://www.youtube.com/watch?v=HyZtBGXLN00
     //TODO
+
+    // Implement Merge sort first
+
+    // Merge Sort infile1
+
+    // Merge Sort infile2
+
+    // Join
 }
 
 void HashJoin (char *infile1, char *infile2,
                unsigned char field, block_t *buffer,
                unsigned int nmem_blocks, char *outfile,
                unsigned int *nres, unsigned int *nios) {
+    // Classic hash join I guess
+    // https://en.wikipedia.org/wiki/Hash_join
     //TODO
 }
