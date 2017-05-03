@@ -75,12 +75,12 @@ uint countValid(char* filename) {
         cerr << "No such file." << endl;
     }
     
-    block_t block;
+    block_t buffer;
     uint count = 0;
 
-    while (fread(&block, 1, sizeof(block_t), in)) {
-        for (uint i = 0; i < block.nreserved; i++) {
-            if (block.entries[i].valid) {
+    while (fread(&buffer, 1, sizeof(block_t), in)) {
+        for (uint i = 0; i < buffer.nreserved; i++) {
+            if (buffer.entries[i].valid) {
                 count++;
             }
         }
@@ -98,7 +98,7 @@ void printRecord(block_t block, int i) {
     cout << "----------------------------------" << endl;
 }
 
-void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool blockBool) {
+void printFile(char *filename, uint recordId, bool recBool, uint blockId, bool blockBool) {
     FILE * in;
 
     in = fopen(filename, "rb");
@@ -106,18 +106,18 @@ void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool b
         cerr << "No such file." << endl;
     }
 
-    block_t block;
-    while (fread(&block, 1, sizeof(block_t), in)) {
-        for (uint i = 0; i < block.nreserved; i++) {
-            if (recBool == true && block.entries[i].recid == recordId) {
-                printRecord(block, i);
+    block_t buffer;
+    while (sizeof(block_t) == fread(&buffer, 1, sizeof(block_t), in)) {
+        for (uint i = 0; i < buffer.nreserved; i++) {
+            if (recBool == true && buffer.entries[i].recid == recordId) {
+                printRecord(buffer, i);
                 return;
             }
-            if (block.entries[i].valid) {
+            if (buffer.entries[i].valid) {
                 if (recBool == false && blockBool == false) {
-                    printRecord(block, i);
-                } else if (blockBool == true && block.blockid == blockId) {
-                    printRecord(block ,i);
+                    printRecord(buffer, i);
+                } else if (blockBool == true && buffer.blockid == blockId) {
+                    printRecord(buffer ,i);
                 }
             }
         }
