@@ -12,7 +12,7 @@ void genRandomString(char *s, const int len) {
     static const char alphanum[] =
         //63^32 = 3.79225543573e57
         //"0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz ";
-        "abcd";
+        "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < len; ++i) {
         s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
@@ -28,7 +28,7 @@ bool randomBool() {
 void createRandFile(char* filename, uint blockNum){
     FILE * out;
 
-    out = fopen(filename, "w");
+    out = fopen(filename, "wb");
     if (out == NULL) {
         cerr << "Could not open input file." << endl;
     }
@@ -56,7 +56,7 @@ void createRandFile(char* filename, uint blockNum){
             genRandomString(temp_str,STR_LENGTH - 1);
             strcpy(record.str, temp_str);
 
-            record.num = rand() % 10000; //Give the record a random number
+            record.num = rand() % 100000; //Give the record a random number
             record.valid = true;
             memmove(&block.entries[j], &record, sizeof(record_t));
         }
@@ -70,7 +70,7 @@ void createRandFile(char* filename, uint blockNum){
 uint countValid(char* filename) {
     FILE * in;
 
-    in = fopen(filename, "r");
+    in = fopen(filename, "rb");
     if (in == NULL) {
         cerr << "No such file." << endl;
     }
@@ -101,7 +101,7 @@ void printRecord(block_t block, int i) {
 void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool blockBool) {
     FILE * in;
 
-    in = fopen(filename, "r");
+    in = fopen(filename, "rb");
     if (in == NULL) {
         cerr << "No such file." << endl;
     }
