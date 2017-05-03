@@ -80,11 +80,12 @@ void WriteValidRecords(FILE *outfile, block_t *buffer, uint *nios) {
         if (buffer->entries[i].valid) {
             fwrite(&(buffer->entries[i]), 1, sizeof(record_t), outfile);
             //fseek(outfile, -sizeof(record_t), SEEK_CUR);
-            record_t tmp;
-            fread(&tmp, 1, sizeof(record_t), outfile);
-            cout << tmp.recid << endl;
-            cout << tmp.num << endl;
-            cout << tmp.str << endl;
+            //record_t tmp;
+            // fread(&tmp, 1, sizeof(record_t), outfile);
+            // cout << tmp.recid << endl;
+            // cout << tmp.num << endl;
+            // cout << tmp.str << endl;
+            // cout << tmp.valid << endl;
             ++*nios;
         }
     }
@@ -147,19 +148,21 @@ void MergeSort (char *infile, unsigned char field,
             Sort(&buffer[i]);
         }
 
-        FILE * temp;
-        temp = fopen(("temp" + to_string(tempNum)).c_str(), "rwb");
+        FILE *temp;
+        temp = fopen(("temp" + to_string(tempNum)).c_str(), "wb");
 
         for (uint i = 0; i < nmem_blocks; i++) {
             fwrite(&buffer[i], 1, sizeof(block_t), temp);
             //WriteValidRecords(temp, &buffer[i], nios);
-            //Invalidate(&buffer[i]);
+            Invalidate(&buffer[i]);
         }
         fclose(temp);
 
         tempNum++;
-        free(buffer);
+        delete buffer;
     }
+
+    cout << "nios: " << *nios << endl;
 
     fclose(in);
     fclose(out);    
