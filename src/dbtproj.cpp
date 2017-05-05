@@ -31,7 +31,7 @@ void RecordSwap(record_t *x, record_t *y) {
     y->recid = x->recid;
     y->valid = x->valid;
     strcpy(y->str, x->str);
-    
+
     x->num = temp.num;
     x->rdummy1 = temp.rdummy1;
     x->rdummy2 = temp.rdummy2;
@@ -108,11 +108,6 @@ void MergeSort (char *infile, unsigned char field,
         cerr << "Could not open input file." << endl;
     }
 
-    out = fopen(outfile, "wb");
-    if (out == NULL) {
-        cerr << "Could not open output file." << endl;
-    }
-
     // This is external Merge Sort!
     // 1. Read nmem_blocks from infile
     // 2. sort them and save to temp file
@@ -165,7 +160,22 @@ void MergeSort (char *infile, unsigned char field,
     cout << "nios: " << *nios << endl;
 
     fclose(in);
-    fclose(out);    
+    
+    out = fopen(outfile, "wb");
+    if (out == NULL) {
+        cerr << "Could not open output file." << endl;
+    }
+
+    // BEGIN MERGE
+
+    // open FOPEN_MAX files
+    // create new blocks and
+    // start filling them by merging the opned files
+    // repeat until files run out
+    // then repeat untill there is only 1 file
+    // that is the output
+
+    fclose(out);
 }
 
 
