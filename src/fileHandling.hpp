@@ -2,7 +2,7 @@
 #define FILEHANDLING_H
 
 #include <stdlib.h>
-#include "./dbtproj.h"
+#include "./dbtproj.hpp"
 
 using namespace std;
 

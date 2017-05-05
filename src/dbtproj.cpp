@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "./dbtproj.h"
+#include "./dbtproj.hpp"
 
 using namespace std;
 //   field: which field will be used for sorting: 0 is for recid, 1 is for num, 2 is for str and 
@@ -75,22 +75,6 @@ void Sort(block_t *buffer) {
     QuickSort(buffer, left, right);
 }
 
-void WriteValidRecords(FILE *outfile, block_t *buffer, uint *nios) {
-    for (uint i = 0; i < buffer->nreserved; i++) {
-        if (buffer->entries[i].valid) {
-            fwrite(&(buffer->entries[i]), 1, sizeof(record_t), outfile);
-            //fseek(outfile, -sizeof(record_t), SEEK_CUR);
-            //record_t tmp;
-            // fread(&tmp, 1, sizeof(record_t), outfile);
-            // cout << tmp.recid << endl;
-            // cout << tmp.num << endl;
-            // cout << tmp.str << endl;
-            // cout << tmp.valid << endl;
-            ++*nios;
-        }
-    }
-}
-
 void Invalidate(block_t * buffer) {
     for (uint i = 0; i < buffer->nreserved; i++) {
         buffer->entries[i].valid = false;
@@ -101,6 +85,11 @@ void MergeSort (char *infile, unsigned char field,
                 block_t *buffer, unsigned int nmem_blocks,
                 char *outfile, unsigned int *nsorted_segs,
                 unsigned int *npasses, unsigned int *nios) { 
+    if (nmem_blocks < 2) {
+        cerr << "Buffer must have at least 2 blocks avaliable to merge sort" << endl;
+        exit(1);
+    }
+
     FILE *in, *out;
 
     in = fopen(infile, "rb");
@@ -148,7 +137,6 @@ void MergeSort (char *infile, unsigned char field,
 
         for (uint i = 0; i < nmem_blocks; i++) {
             fwrite(&buffer[i], 1, sizeof(block_t), temp);
-            //WriteValidRecords(temp, &buffer[i], nios);
             Invalidate(&buffer[i]);
         }
         fclose(temp);
@@ -170,11 +158,37 @@ void MergeSort (char *infile, unsigned char field,
 
     // open FOPEN_MAX files
     // create new blocks and
-    // start filling them by merging the opned files
+    // start filling them by merging the opened files
+    // when block is full write it to file
     // repeat until files run out
     // then repeat untill there is only 1 file
     // that is the output
 
+    int myFOpenMax;
+    if (FOPEN_MAX < nmem_blocks) {
+        myFOpenMax = nmem_blocks;
+    } else {
+        myFOpenMax = FOPEN_MAX; // 16
+    }
+
+    int filesToMerge = tempNum;
+    int it = 0; // itteration
+
+    while (filesToMerge != 1) {
+        FILE *files[myFOpenMax]; 
+        buffer = new block_t[nmem_blocks];
+        
+        for (int i = 0; i < myFOpenMax && i < filesToMerge; i++) {
+            files[i] = fopen(("temp" + to_string(i + it*tempNum)).c_str(), "rb");
+            fread(&buffer[i], 1, sizeof(block_t), files[i]);
+        }
+
+        while (true) {
+            block_t temp;
+        }
+    }
+    
+    
     fclose(out);
 }
 
@@ -303,10 +317,7 @@ void EliminateDuplicates (char *infile, unsigned char field,
                 }
             }
             // write file
-            // TODO: Here it should write only valid entries,
-            // not the whole block
             fwrite(&buffer[i], 1, sizeof(block_t), out);
-            //WriteValidRecords(out, &buffer[i], nios);
         }
     }
     cout << "Vector size: " << numVect.size()*sizeof(buffer[1].entries[1].str) << endl;

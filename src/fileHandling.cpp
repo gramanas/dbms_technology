@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./dbtproj.h"
-#include "./fileHandling.h"
+#include "./dbtproj.hpp"
+#include "./fileHandling.hpp"
 
 using namespace std;
 
