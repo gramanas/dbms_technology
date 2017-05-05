@@ -21,4 +21,5 @@ void createRandFile(char* filename, uint blockNum);
 // prints a binary file in the project's form
 void printFile(char* filename, uint recordId, bool recBool, uint blockId, bool blockBool);
 
+void clearFile(char *filename);
 #endif

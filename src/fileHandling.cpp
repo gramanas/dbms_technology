@@ -56,7 +56,7 @@ void createRandFile(char* filename, uint blockNum){
             genRandomString(temp_str,STR_LENGTH - 1);
             strcpy(record.str, temp_str);
 
-            record.num = rand() % 100000; //Give the record a random number
+            record.num = rand() % 1000; //Give the record a random number
             record.valid = true;
             memmove(&block.entries[j], &record, sizeof(record_t));
         }
@@ -113,14 +113,77 @@ void printFile(char *filename, uint recordId, bool recBool, uint blockId, bool b
                 printRecord(buffer, i);
                 return;
             }
-            if (buffer.entries[i].valid) {
+            //if (buffer.entries[i].valid) {
                 if (recBool == false && blockBool == false) {
                     printRecord(buffer, i);
                 } else if (blockBool == true && buffer.blockid == blockId) {
                     printRecord(buffer ,i);
                 }
-            }
+                //}
         }
     }
     fclose(in);
+}
+
+// Removes invalid entries so the other functions
+// won't have to care about it
+void clearFile(char *filename) {
+    FILE *in, *out;
+
+    in = fopen(filename, "rb");
+    if (in == NULL) {
+        cerr << "No such file." << endl;
+    }
+
+    out = fopen("tempClear", "wb");
+    if (out == NULL) {
+        cerr << "No such file." << endl;
+    }
+
+    block_t buffer;
+    uint blockid = 0;
+    record_t tempRec[MAX_RECORDS_PER_BLOCK];
+    uint nreserved = 0;
+    uint count = 0;
+    //while (sizeof(block_t) == fread(&buffer, 1, sizeof(block_t), in)) {
+    while (!feof(in)) {
+        if (count == 0) {
+            fread(&buffer, 1, sizeof(block_t), in);
+        }
+        
+        while (count < buffer.nreserved && nreserved < MAX_RECORDS_PER_BLOCK) {
+            if (buffer.entries[count].valid == true) {
+                tempRec[count] = buffer.entries[count];
+                nreserved++;
+            }
+            count++;
+        }
+
+        if (nreserved == MAX_RECORDS_PER_BLOCK || feof(in)) {
+            block_t temp;
+
+            temp.blockid = blockid++;
+            temp.valid = true;
+            temp.nreserved = nreserved;
+            for (uint i = 0; i < nreserved; i++) {
+                temp.entries[i] = tempRec[i];
+            }
+            for (uint i = nreserved; i < MAX_RECORDS_PER_BLOCK; i++) {
+                temp.entries[i].valid = false;
+            }
+            fwrite(&temp, 1, sizeof(block_t), out);
+
+            nreserved = 0;
+        }
+
+        if (count >= MAX_RECORDS_PER_BLOCK) {
+            count = 0;
+        }
+    }
+
+    fclose(in);
+    fclose(out);
+
+    remove(filename);
+    rename("tempClear", filename);    
 }

@@ -18,10 +18,11 @@ int main(int argc, char** argv) {
                 strcmp(argv[1], "--help") == 0) {
         cout << "Usage:\n" << endl;
         cout << "create filename N -- Creates a random binary file named \"filename\" with N blocks." << endl;
+        cout << "clear filename -- deletes invalid records fromo binary file named \"filename\"" << endl;
         cout << "print filename [c/[[r]/[b] N]]  -- If no arguments are given prints whole file. " << endl;
         cout << "                               r and then a number prints record N" << endl;
         cout << "                               b and then a number pritns the whole block N" << endl;
-        cout << "                               c to count the valid entries" << endl << endl;
+        cout << "                               c to count the valid entries" << endl;
         cout << "sort infile field #memory_blocks outfile" << endl;
         cout << "                               External Merge Sort of file in filed using #memory_blocks" << endl;
         cout << "                               The field can be [record, number, string, numstr]" << endl;
@@ -32,6 +33,8 @@ int main(int argc, char** argv) {
         cout << "                               #memory_blocks is an integer" << endl;
     } else if (strcmp(argv[1], "create") == 0) {
         createRandFile(argv[2], atoi(argv[3]));
+    } else if (strcmp(argv[1], "clear") == 0){
+        clearFile(argv[2]);
     } else if (strcmp(argv[1], "print") == 0) {
         if (argc == 3) {
             printFile(argv[2], 0, false, 0, false);
