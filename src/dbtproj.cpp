@@ -81,6 +81,7 @@ void Invalidate(block_t * buffer) {
     }
 }
 
+
 void MergeSort (char *infile, unsigned char field,
                 block_t *buffer, unsigned int nmem_blocks,
                 char *outfile, unsigned int *nsorted_segs,
@@ -114,6 +115,7 @@ void MergeSort (char *infile, unsigned char field,
 
 
     size_t n = sizeof(block_t);
+    cout << "Size of block: " <<  n;
     int tempNum = 0;
     block_t tempBlk;
     while(sizeof(block_t) == fread(&tempBlk, 1, sizeof(block_t), in)) {
@@ -221,7 +223,7 @@ bool searchAndInsert (vector<T> * vect, T item, int first, int last) {
         vect->insert(vect->begin(), item);
         return false;
     }
-
+     
     while (first <= last) {
         mid = first + (last - first) / 2;
         // if item is on vector
@@ -328,15 +330,66 @@ void EliminateDuplicates (char *infile, unsigned char field,
     fclose(out);
 }
 
+/* ----------------------------------------------------------------------------------------------------------------------
+   infile1: the name of the first input file
+   infile2: the name of the second input file
+   field: which field will be used for the join: 0 is for recid, 1 is for num, 2 is for str and 
+     3 is for both num and str
+   buffer: pointer to memory buffer
+   nmem_blocks: number of blocks in memory
+   outfile: the name of the output file
+   nres: number of pairs in output (this should be set by you)
+   nios: number of IOs performed (this should be set by you)
+   ----------------------------------------------------------------------------------------------------------------------
+*/
 void MergeJoin (char *infile1, char *infile2,
                 unsigned char field, block_t *buffer,
                 unsigned int nmem_blocks, char *outfile,
                 unsigned int *nres, unsigned int *nios) {
     // http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
-    // also
     // https://www.youtube.com/watch?v=HyZtBGXLN00
-    //TODO
 
+    //Files initiation
+    FILE *in_1,*in_2, *out;
+
+    // Files
+    in_1 = fopen(infile1, "rb");
+    in_2 = fopen(infile2, "rb");
+    if (in_1 == NULL || in_2 == NULL) {
+        cerr << "Could not open input files." << endl;
+    }
+
+    out = fopen(outfile, "wb");
+    if (out == NULL) {
+         cerr << "Could not open output file." << endl;
+    }
+    char* inFileSorted_1 = new char(sizeof(infile1) + sizeof("_sorted"));
+    inFileSorted_1 = strcat(infile1,"_sorted");
+    
+    uint* nsorted_segs = new uint;
+    uint* npasses = new uint;
+    
+
+    // Sort the the 1st infile and take sorted file inFileSorted_1
+    cout << "Sort the the 1st infile and take sorted file inFileSorted_1";
+    MergeSort(infile1, field, buffer, nmem_blocks, inFileSorted_1,  nsorted_segs, npasses, nios);
+
+    char* inFileSorted_2 = new char(sizeof(infile2) + sizeof("_sorted"));
+    inFileSorted_2 = strcat(infile2,"_sorted");
+        
+    // Sort the the 2nd infile and take sorted file inFileSorted_2
+    cout << "Sort the the 2nd infile and take sorted file inFileSorted_2";
+    MergeSort(infile2, field, buffer, nmem_blocks, inFileSorted_2,  nsorted_segs, npasses, nios);
+
+    //Now we have two sorted files and we can continue to the merge Join
+
+    // buffer is a place in memory with size assigned by the user in witch
+    // blocks are stored
+    buffer = new block_t[nmem_blocks];
+
+    
+
+    
     // Implement Merge sort first
 
     // Merge Sort infile1
@@ -353,4 +406,5 @@ void HashJoin (char *infile1, char *infile2,
     // Classic hash join I guess
     // https://en.wikipedia.org/wiki/Hash_join
     //TODO
+    
 }
