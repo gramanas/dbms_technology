@@ -22,7 +22,7 @@ void genRandomString(char *s, const int len) {
 }
 
 bool randomBool() {
-	return rand() % 2 == 1;
+        return rand() % 2 == 1;
 }
 
 void createRandFile(char* filename, uint blockNum){
@@ -45,12 +45,12 @@ void createRandFile(char* filename, uint blockNum){
     if (temp_str == NULL) {
         cerr << "Memory error" << endl;
         exit(1);
-    }        
+    }
 
     for(uint i = 0; i < blockNum; i++){ //Make blockNum blocks and put records inside
-        block.blockid = i; 
+        block.blockid = i;
 
-        for(uint j = 0; j < MAX_RECORDS_PER_BLOCK; j++) { // Put records in blocks 
+        for(uint j = 0; j < MAX_RECORDS_PER_BLOCK; j++) { // Put records in blocks
             record.recid = record_id++;
 
             genRandomString(temp_str,STR_LENGTH - 1);
@@ -74,7 +74,7 @@ uint countValid(char* filename) {
     if (in == NULL) {
         cerr << "No such file." << endl;
     }
-    
+
     block_t buffer;
     uint count = 0;
 
@@ -84,13 +84,13 @@ uint countValid(char* filename) {
                 count++;
             }
         }
-    }    
+    }
     fclose(in);
     return count;
 }
 
-void printRecord(block_t block, int i) { 
-    cout << "B_ID  : " << block.blockid          << endl; 
+void printRecord(block_t block, int i) {
+    cout << "B_ID  : " << block.blockid          << endl;
     cout << "R_ID  : " << block.entries[i].recid << endl;
     cout << "R_NUM : " << block.entries[i].num   << endl;
     cout << "R_STR : " << block.entries[i].str   << endl;
@@ -150,7 +150,7 @@ void clearFile(char *filename) {
         if (count == 0) {
             fread(&buffer, 1, sizeof(block_t), in);
         }
-        
+
         while (count < buffer.nreserved && nreserved < MAX_RECORDS_PER_BLOCK) {
             if (buffer.entries[count].valid == true) {
                 tempRec[count] = buffer.entries[count];
@@ -185,5 +185,5 @@ void clearFile(char *filename) {
     fclose(out);
 
     remove(filename);
-    rename("tempClear", filename);    
+    rename("tempClear", filename);
 }

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// generate a randomg string 
+// generate a randomg string
 void genRandomString(char *s, const int len);
 
 // get true or false with a 50 - 50 chance

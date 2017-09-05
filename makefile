@@ -12,7 +12,7 @@ ODIR=obj
 CXXFLAGS=-I$(IDIR) -std=c++11
 
 # Dependancies to track
-_DEPS = fileHandling.h dbtproj.h
+_DEPS = fileHandling.hpp dbtproj.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Objects to track
